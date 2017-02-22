@@ -1,0 +1,9 @@
+[submodule "Submodules/OBJCXX"]
+	path = Submodules/OBJCXX
+	url = https://github.com/macmade/OBJCXX.git
+[submodule "Submodules/SeriousCode"]
+	path = Submodules/SeriousCode
+	url = https://github.com/macmade/SeriousCode.git
+[submodule "Submodules/PIMPL"]
+	path = Submodules/PIMPL
+	url = https://github.com/macmade/PIMPL.git
