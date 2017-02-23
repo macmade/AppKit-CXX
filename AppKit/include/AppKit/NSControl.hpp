@@ -39,7 +39,7 @@ namespace NS
     {
         public:
             
-            OBJCXX_USING_BASE( Control, View );
+            OBJCXX_USING_BASE( Control, View )
             
             Control( const Rect & frame );
             

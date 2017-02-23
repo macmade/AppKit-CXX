@@ -37,7 +37,7 @@ namespace Demo
     {
         public:
             
-            OBJCXX_USING_BASE( ApplicationDelegate, NS::Object );
+            OBJCXX_USING_BASE( ApplicationDelegate, NS::Object )
             
             static void registerClass( void );
             

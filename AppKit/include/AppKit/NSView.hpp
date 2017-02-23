@@ -38,7 +38,7 @@ namespace NS
     {
         public:
             
-            OBJCXX_USING_BASE( View, Object );
+            OBJCXX_USING_BASE( View, Object )
             
             View( const Rect & frame );
             

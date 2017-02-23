@@ -40,7 +40,7 @@ namespace NS
     {
         public:
             
-            OBJCXX_USING_BASE( Window, Object );
+            OBJCXX_USING_BASE( Window, Object )
             
             enum StyleMask: unsigned int
             {

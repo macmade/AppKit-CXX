@@ -39,7 +39,7 @@ namespace NS
     {
         public:
             
-            OBJCXX_USING_BASE( Button, Control );
+            OBJCXX_USING_BASE( Button, Control )
             
             enum Type: int
             {

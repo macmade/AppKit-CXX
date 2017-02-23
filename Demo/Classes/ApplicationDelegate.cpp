@@ -28,6 +28,7 @@
  */
 
 #include "ApplicationDelegate.hpp"
+#include <mutex>
 
 extern "C"
 {
@@ -39,14 +40,23 @@ namespace Demo
 {
     void ApplicationDelegate::registerClass( void )
     {
-        OBJCXX::ClassBuilder cls( "ApplicationDelegate", "NSObject" );
+        static std::once_flag once;
         
-        cls.addInstanceMethod( "applicationDidFinishLaunching:", reinterpret_cast< IMP >( applicationDidFinishLaunching ), "v24@0:8@16" );
-        cls.addInstanceMethod( "applicationWillTerminate:",      reinterpret_cast< IMP >( applicationWillTerminate      ), "v24@0:8@16" );
-        
-        cls.addProperty( "mainWindowController", OBJCXX::ClassBuilder::TypeObject );
-        
-        cls.registerClass();
+        std::call_once
+        (
+            once,
+            []
+            {
+                OBJCXX::ClassBuilder cls( "ApplicationDelegate", "NSObject" );
+                
+                cls.addInstanceMethod( "applicationDidFinishLaunching:", reinterpret_cast< IMP >( applicationDidFinishLaunching ), "v24@0:8@16" );
+                cls.addInstanceMethod( "applicationWillTerminate:",      reinterpret_cast< IMP >( applicationWillTerminate      ), "v24@0:8@16" );
+                
+                cls.addProperty( "mainWindowController", OBJCXX::ClassBuilder::TypeObject );
+                
+                cls.registerClass();
+            }
+        );
     }
     
     MainWindowController ApplicationDelegate::mainWindowController( void ) const
@@ -65,6 +75,8 @@ static void applicationDidFinishLaunching( id o, SEL _cmd, id notification )
     NS::Notification          n( notification );
     Demo::ApplicationDelegate self( o );
     
+    ( void )_cmd;
+    
     NS::Log( "%@", static_cast< id >( n ) );
     Demo::MainWindowController::registerClass();
     
@@ -78,6 +90,8 @@ static void applicationWillTerminate( id o, SEL _cmd, id notification )
 {
     NS::Notification          n( notification );
     Demo::ApplicationDelegate self( o );
+    
+    ( void )_cmd;
     
     NS::Log( "%@", static_cast< id >( n ) );
 }

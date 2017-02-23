@@ -38,7 +38,7 @@ namespace NS
     {
         public:
             
-            OBJCXX_USING_BASE( Alert, Object );
+            OBJCXX_USING_BASE( Alert, Object )
             
             Alert( void );
             

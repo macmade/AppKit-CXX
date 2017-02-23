@@ -28,6 +28,7 @@
  */
 
 #include "MainWindowController.hpp"
+#include <mutex>
 
 extern "C"
 {
@@ -39,12 +40,21 @@ namespace Demo
 {
     void MainWindowController::registerClass( void )
     {
-        OBJCXX::ClassBuilder cls( "MainWindowController", "NSWindowController" );
+        static std::once_flag once;
         
-        cls.addInstanceMethod( "init",           reinterpret_cast< IMP >( init          ), "@16@0:8" );
-        cls.addInstanceMethod( "buttonClicked:", reinterpret_cast< IMP >( buttonClicked ), "v24@0:8@16" );
-        
-        cls.registerClass();
+        std::call_once
+        (
+            once,
+            []
+            {
+                OBJCXX::ClassBuilder cls( "MainWindowController", "NSWindowController" );
+                
+                cls.addInstanceMethod( "init",           reinterpret_cast< IMP >( init          ), "@16@0:8" );
+                cls.addInstanceMethod( "buttonClicked:", reinterpret_cast< IMP >( buttonClicked ), "v24@0:8@16" );
+                
+                cls.registerClass();
+            }
+        );
     }
     
     MainWindowController::MainWindowController( void ):
@@ -64,13 +74,15 @@ static id init( id o, SEL _cmd )
     Demo::MainWindowController self( o );
     NS::Button                 btn( { { 20, 20 }, { 200, 32 } } );
     
+    ( void )_cmd;
+    
     NS::Log( "%@", o );
     
     self.setWindow
     (
         NS::Window
         (
-            { 0, 0, 240, 72 },
+            { { 0, 0 }, { 240, 72 } },
             (
                 NS::Window::StyleMask::Titled
               | NS::Window::StyleMask::Closable
@@ -98,6 +110,8 @@ static void buttonClicked( id o, SEL _cmd, id sender )
 {
     Demo::MainWindowController self( o );
     NS::Alert                 alert;
+    
+    ( void )_cmd;
     
     NS::Log( "%@", sender );
     

@@ -30,7 +30,9 @@
 #ifndef APPKIT_PREFIX_HPP
 #define APPKIT_PREFIX_HPP
 
+/*
 #include "../Submodules/SeriousCode/clang-warnings.h"
+*/
 
 #ifdef __clang__
 #pragma clang diagnostic ignored "-Wpadded"

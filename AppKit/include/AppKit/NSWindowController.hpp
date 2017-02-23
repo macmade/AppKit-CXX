@@ -39,7 +39,7 @@ namespace NS
     {
         public:
             
-            OBJCXX_USING_BASE( WindowController, Object );
+            OBJCXX_USING_BASE( WindowController, Object )
             
             WindowController( void );
             
