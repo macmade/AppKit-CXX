@@ -44,6 +44,9 @@ namespace Demo
             MainWindowController mainWindowController( void ) const;
             void                 mainWindowController( const MainWindowController & o );
             
+            void applicationDidFinishLaunching( const NS::Notification & notification );
+            void applicationWillTerminate(      const NS::Notification & notification );
+            
         private:
             
             ApplicationDelegate( void ) = default;

@@ -41,5 +41,8 @@ namespace Demo
             static void registerClass( void );
             
             MainWindowController( void );
+            
+            id   init( void );
+            void buttonClicked( const NS::Object & sender );
     };
 }

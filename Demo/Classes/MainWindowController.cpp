@@ -30,12 +30,6 @@
 #include "MainWindowController.hpp"
 #include <mutex>
 
-extern "C"
-{
-    static id   init( id o, SEL _cmd );
-    static void buttonClicked( id o, SEL _cmd, id sender );
-}
-
 namespace Demo
 {
     void MainWindowController::registerClass( void )
@@ -49,9 +43,8 @@ namespace Demo
             {
                 OBJCXX::ClassBuilder cls( "MainWindowController", "NSWindowController" );
                 
-                cls.addInstanceMethod( "init",           reinterpret_cast< IMP >( init          ), "@16@0:8" );
-                cls.addInstanceMethod( "buttonClicked:", reinterpret_cast< IMP >( buttonClicked ), "v24@0:8@16" );
-                
+                cls.instanceMethod< MainWindowController, id                       >( "init",           &MainWindowController::init,          "@16@0:8" ).add();
+                cls.instanceMethod< MainWindowController, void, const NS::Object & >( "buttonClicked:", &MainWindowController::buttonClicked, "v24@0:8@16" ).add< void, id >();
                 cls.registerClass();
             }
         );
@@ -67,55 +60,49 @@ namespace Demo
             }
         )
     {}
-}
-
-static id init( id o, SEL _cmd )
-{
-    Demo::MainWindowController self( o );
-    NS::Button                 btn( { { 20, 20 }, { 200, 32 } } );
     
-    ( void )_cmd;
-    
-    NS::Log( "%@", o );
-    
-    self.setWindow
-    (
-        NS::Window
+    id MainWindowController::init( void )
+    {
+        NS::Button btn( { { 20, 20 }, { 200, 32 } } );
+        
+        NS::Log( "%@", static_cast< id >( *( this ) ) );
+        
+        this->setWindow
         (
-            { { 0, 0 }, { 240, 72 } },
+            NS::Window
             (
-                NS::Window::StyleMask::Titled
-              | NS::Window::StyleMask::Closable
-              | NS::Window::StyleMask::Miniaturizable
-            ),
-            NS::BackingStoreType::Buffered,
-            false
-        )
-    );
+                { { 0, 0 }, { 240, 72 } },
+                (
+                    NS::Window::StyleMask::Titled
+                  | NS::Window::StyleMask::Closable
+                  | NS::Window::StyleMask::Miniaturizable
+                ),
+                NS::BackingStoreType::Buffered,
+                false
+            )
+        );
+        
+        btn.setButtonType( NS::Button::Type::MomentaryPushIn );
+        btn.setBezelStyle( NS::Button::BezelStyle::Rounded );
+        btn.setTitle( "Click me..." );
+        btn.setKeyEquivalent( "\r" );
+        btn.setTarget( *( this ) );
+        btn.setAction( OBJCXX::RT::GetSelector( "buttonClicked:" ) );
+        
+        this->window().setTitle( "AppKit++ Demo" );
+        this->window().contentView().addSubview( btn );
+        
+        return *( this );
+    }
     
-    btn.setButtonType( NS::Button::Type::MomentaryPushIn );
-    btn.setBezelStyle( NS::Button::BezelStyle::Rounded );
-    btn.setTitle( "Click me..." );
-    btn.setKeyEquivalent( "\r" );
-    btn.setTarget( self );
-    btn.setAction( OBJCXX::RT::GetSelector( "buttonClicked:" ) );
-    
-    self.window().setTitle( "AppKit++ Demo" );
-    self.window().contentView().addSubview( btn );
-    
-    return self;
-}
-
-static void buttonClicked( id o, SEL _cmd, id sender )
-{
-    Demo::MainWindowController self( o );
-    NS::Alert                 alert;
-    
-    ( void )_cmd;
-    
-    NS::Log( "%@", sender );
-    
-    alert.setMessageText( "AppKit++" );
-    alert.setInformativeText( "hello, world" );
-    alert.runModal();
+    void MainWindowController::buttonClicked( const NS::Object & sender )
+    {
+        NS::Alert alert;
+        
+        NS::Log( "%@", static_cast< id >( sender ) );
+        
+        alert.setMessageText( "AppKit++" );
+        alert.setInformativeText( "hello, world" );
+        alert.runModal();
+    }
 }

@@ -30,12 +30,6 @@
 #include "ApplicationDelegate.hpp"
 #include <mutex>
 
-extern "C"
-{
-    static void applicationDidFinishLaunching( id o, SEL _cmd, id notification );
-    static void applicationWillTerminate(      id o, SEL _cmd, id notification );
-}
-
 namespace Demo
 {
     void ApplicationDelegate::registerClass( void )
@@ -49,11 +43,9 @@ namespace Demo
             {
                 OBJCXX::ClassBuilder cls( "ApplicationDelegate", "NSObject" );
                 
-                cls.addInstanceMethod( "applicationDidFinishLaunching:", reinterpret_cast< IMP >( applicationDidFinishLaunching ), "v24@0:8@16" );
-                cls.addInstanceMethod( "applicationWillTerminate:",      reinterpret_cast< IMP >( applicationWillTerminate      ), "v24@0:8@16" );
-                
+                cls.instanceMethod< ApplicationDelegate, void, const NS::Notification & >( "applicationDidFinishLaunching:", &ApplicationDelegate::applicationDidFinishLaunching, "v24@0:8@16" ).add< void, id >();
+                cls.instanceMethod< ApplicationDelegate, void, const NS::Notification & >( "applicationWillTerminate:",      &ApplicationDelegate::applicationWillTerminate,      "v24@0:8@16" ).add< void, id >();
                 cls.addProperty( "mainWindowController", OBJCXX::ClassBuilder::TypeObject );
-                
                 cls.registerClass();
             }
         );
@@ -68,30 +60,19 @@ namespace Demo
     {
         return this->message< void >( "setMainWindowController:" ).send< id >( o );
     }
-}
-
-static void applicationDidFinishLaunching( id o, SEL _cmd, id notification )
-{
-    NS::Notification          n( notification );
-    Demo::ApplicationDelegate self( o );
     
-    ( void )_cmd;
+    void ApplicationDelegate::applicationDidFinishLaunching( const NS::Notification & notification )
+    {
+        NS::Log( "%@", static_cast< id >( notification ) );
+        Demo::MainWindowController::registerClass();
+        
+        this->mainWindowController( {} );
+        this->mainWindowController().window().center();
+        this->mainWindowController().window().makeKeyAndOrderFront( nullptr );
+    }
     
-    NS::Log( "%@", static_cast< id >( n ) );
-    Demo::MainWindowController::registerClass();
-    
-    self.mainWindowController( {} );
-    self.mainWindowController().window().center();
-    self.mainWindowController().window().makeKeyAndOrderFront( nullptr );
-    
-}
-
-static void applicationWillTerminate( id o, SEL _cmd, id notification )
-{
-    NS::Notification          n( notification );
-    Demo::ApplicationDelegate self( o );
-    
-    ( void )_cmd;
-    
-    NS::Log( "%@", static_cast< id >( n ) );
+    void ApplicationDelegate::applicationWillTerminate( const NS::Notification & notification )
+    {
+        NS::Log( "%@", static_cast< id >( notification ) );
+    }
 }
