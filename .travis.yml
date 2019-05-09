@@ -1,3 +1,5 @@
 language: objective-c
 xcode_project: AppKit.xcodeproj
 xcode_scheme: Demo
+script:
+- set -o pipefail && xcodebuild -project AppKit.xcodeproj -scheme Demo build | xcpretty
